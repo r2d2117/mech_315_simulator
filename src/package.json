@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@tensorflow/tfjs": "^2.7.0",
-    "collections": "^5.1.12",
-    "lodash": "^4.17.20"
-  }
-}

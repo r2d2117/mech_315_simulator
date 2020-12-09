@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@tensorflow/tfjs": "^2.7.0",
+    "collections": "^5.1.12",
     "core-js": "^3.8.1",
     "deasync": "^0.1.21",
     "lodash": "^4.17.20",

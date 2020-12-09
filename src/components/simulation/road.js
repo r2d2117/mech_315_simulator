@@ -1,6 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
 import * as dq from 'collections/deque';
-import * as nj from 'numj';
 
 export default class Road{
 
@@ -17,7 +16,7 @@ export default class Road{
 
         if (minX==null){
             this.minX = -length/2;
-            console.log(this.minX);
+            //console.log(this.minX);
         }
         else{
             this.minX = minX;
@@ -51,35 +50,58 @@ export default class Road{
         var freq = this.frequency;
         var dist = this.distance;
         var res = this.resolution;
+        var nextPoint;
 
         var types = ["sine", "square", "triangle", "bump"];
-
+        //console.log(this.mode);
+        //console.log(this.mode=="flat");
+        var subTypes = ["triangle", "bump"];
 
         for (var i = 0; i<newPoints; i++){
             this.yCoords.shift();
 
             if (types.includes(this.mode)){
 
-                var sinArg = fr
+                var sineArg = freq * (dist +(i/res));
+                var sineVal = Math.sin(sineArg);
 
-
-
-
-
-
+                if (this.mode == "sine"){
+                    nextPoint = amp * sineVal;
+                }
+                else if (this.mode == "square"){
+                    if (sineVal >= 0){
+                        nextPoint = 0;
+                    }
+                    else{
+                        nextPoint = amp;
+                    }
+                }
+                else if (subTypes.includes(this.mode)){
+                    var waveArg = sineArg % (2 * Math.pi);
+                    if (this.mode == "bump"){
+                        waveArg = waveArg * 2;
+                    }
+                    if (waveArg <= Math.pi){
+                        nextPoint = amp * (waveArg/Math.pi);
+                    }
+                    else if (waveArg <= 2*Math.pi){
+                        nextPoint = amp * (2 * Math.pi - waveArg)/Math.pi;
+                    }
+                    else{
+                        nextPoint = 0;
+                    }
+                }
             }
-            else if (self.mode == "flat"){
-
-
-
+            else if (this.mode == "flat"){
+                nextPoint = 0;
             }
             else{
                 throw 'Invalid mode';
             }
-
-
-
+            this.yCoords.push(nextPoint);
         }
+        this.distance += lengthToGen;
+        return [this.xCoords, this.yCoords.toArray()];
     }
 
 }
