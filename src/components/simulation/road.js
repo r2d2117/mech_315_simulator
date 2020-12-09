@@ -77,15 +77,15 @@ export default class Road{
                     }
                 }
                 else if (subTypes.includes(this.mode)){
-                    var waveArg = sineArg % (2 * Math.pi);
+                    var waveArg = sineArg % (2 * Math.PI);
                     if (this.mode == "bump"){
                         waveArg = waveArg * 2;
                     }
-                    if (waveArg <= Math.pi){
-                        nextPoint = amp * (waveArg/Math.pi);
+                    if (waveArg <= Math.PI){
+                        nextPoint = amp * (waveArg/Math.PI);
                     }
-                    else if (waveArg <= 2*Math.pi){
-                        nextPoint = amp * (2 * Math.pi - waveArg)/Math.pi;
+                    else if (waveArg <= 2*Math.PI){
+                        nextPoint = amp * (2 * Math.PI - waveArg)/Math.PI;
                     }
                     else{
                         nextPoint = 0;

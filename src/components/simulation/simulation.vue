@@ -8,6 +8,7 @@
 
 import * as su from "./shapeutil.js";
 import Road from "./road.js";
+import Car from "./car.js";
 
 export default {
     data() {
@@ -94,9 +95,9 @@ export default {
     }
 }
 
-console.log(su.arc());
-console.log(su.zigzag());
-
+//console.log(su.arc());
+//console.log(su.zigzag());
+var v = new Car();
 
 
 </script>

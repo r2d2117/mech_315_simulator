@@ -5,7 +5,7 @@ const PI = Math.PI;
 /* exported arc */
 
 export function arc(center=[0,0], radius=1, theta1=0, theta2=2*PI, resolution=180){
-
+    console.debug("Values passed to arc ",center,radius,theta1,theta2,resolution);
     var x = tf.scalar(center[0]);
     var y = tf.scalar(center[1]);
     var rad = tf.scalar(radius);
