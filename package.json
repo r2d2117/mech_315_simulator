@@ -11,6 +11,7 @@
     "@tensorflow/tfjs": "^2.7.0",
     "core-js": "^3.8.1",
     "deasync": "^0.1.21",
+    "lodash": "^4.17.20",
     "mathjs": "^8.1.0",
     "numj": "^0.15.0",
     "sharp": "^0.26.3",

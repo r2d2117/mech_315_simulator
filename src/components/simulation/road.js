@@ -1,5 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import * as dq from 'collections/deque';
+import * as nj from 'numj';
 
 export default class Road{
 
@@ -12,25 +13,73 @@ export default class Road{
 
         var numPoints = parseInt(length*resolution);
         this.numPoints = numPoints;
-
+        this.distance = 0;
 
         if (minX==null){
             this.minX = -length/2;
+            console.log(this.minX);
         }
         else{
             this.minX = minX;
         }
         this.maxX = this.minX + length;
 
-        this.xCoords = tf.linspace(this.minX,this.maxX, numPoints);
 
-        self.yCoords = dq([1,2,3,4,5]);
+        this.xCoords = tf.linspace(this.minX, this.maxX, numPoints).arraySync();
 
-        console.log(self.yCoords);
+
+        var zer = tf.zeros([1,numPoints]).arraySync()[0];
+        this.yCoords = dq(zer);
+
 
     }
 
+    getCoords(){
+        return [this.xCoords,this.yCoords.toArray()];
+
+    }
+
+    generate(lengthToGen){
+
+        var newPoints = parseInt(lengthToGen*this.resolution);
+
+        if (lengthToGen > 0 && newPoints == 0){
+            newPoints = 1;
+        }
+
+        var amp = this.amplitude;
+        var freq = this.frequency;
+        var dist = this.distance;
+        var res = this.resolution;
+
+        var types = ["sine", "square", "triangle", "bump"];
 
 
+        for (var i = 0; i<newPoints; i++){
+            this.yCoords.shift();
+
+            if (types.includes(this.mode)){
+
+                var sinArg = fr
+
+
+
+
+
+
+            }
+            else if (self.mode == "flat"){
+
+
+
+            }
+            else{
+                throw 'Invalid mode';
+            }
+
+
+
+        }
+    }
 
 }

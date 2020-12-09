@@ -87,7 +87,9 @@ export default {
 console.log(su.arc());
 console.log(su.zigzag());
 
-var r = new Road(10,300,"flat",0.3,0.4,0.2);
+var r = new Road(10,300,"flat",0.3,0.4);
+
+console.log(r.getCoords());
 
 
 </script>
