@@ -27,7 +27,7 @@ export default {
     methods: {
         init(){
 
-            this.r = new Road(600,1,"sine",10,0.03);
+            this.r = new Road(600,1,"triangle",40,0.03);
 
             window.requestAnimationFrame(this.draw);
         },
