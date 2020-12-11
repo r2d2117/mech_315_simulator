@@ -12,9 +12,11 @@
     "collections": "^5.1.12",
     "core-js": "^3.8.1",
     "deasync": "^0.1.21",
+    "everpolate": "0.0.3",
     "lodash": "^4.17.20",
     "mathjs": "^8.1.0",
     "numj": "^0.15.0",
+    "scikit-learn": "^0.1.0",
     "sharp": "^0.26.3",
     "vue": "^3.0.4"
   },

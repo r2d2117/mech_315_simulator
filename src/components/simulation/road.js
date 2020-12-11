@@ -4,6 +4,7 @@ import * as dq from 'collections/deque';
 export default class Road{
 
     constructor(length, resolution=300, mode="flat", amplitude=0.3, frequency=0.04, minX = null){
+        console.debug("Road Constructor Called with vals: ", length, resolution, mode, amplitude, frequency, minX);
         this.resolution = resolution;
         this.length = length;
         this.mode = mode;
@@ -51,7 +52,6 @@ export default class Road{
         var dist = this.distance;
         var res = this.resolution;
         var nextPoint;
-
         var types = ["sine", "square", "triangle", "bump"];
         //console.log(this.mode);
         //console.log(this.mode=="flat");
@@ -67,7 +67,9 @@ export default class Road{
 
                 if (this.mode == "sine"){
                     nextPoint = amp * sineVal;
+
                 }
+
                 else if (this.mode == "square"){
                     if (sineVal >= 0){
                         nextPoint = 0;
@@ -98,9 +100,13 @@ export default class Road{
             else{
                 throw 'Invalid mode';
             }
+            //console.log(nextPoint);
             this.yCoords.push(nextPoint);
         }
         this.distance += lengthToGen;
+
+
+        //console.debug("Coords: ", this.xCoords, this.yCoords.toArray());
         return [this.xCoords, this.yCoords.toArray()];
     }
 

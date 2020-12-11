@@ -2,6 +2,8 @@ import * as su from "./shapeutil.js";
 import Road from "./road.js";
 import * as tf from '@tensorflow/tfjs';
 import * as dq from 'collections/deque';
+import * as sl from 'scikit-learn';
+
 
 export default class Car{
 
@@ -32,8 +34,8 @@ export default class Car{
         for(var i = 0; i<chassisDelta[0].length; i++){
             var deltaX = chassisDelta[0][i];
             var deltaY = chassisDelta[1][i];
-            var chassisXP = wholeChassis[0][wholeChassis[0].length-2]+deltaX;
-            var chassisYP = wholeChassis[1][wholeChassis[1].length-2]+deltaY;
+            var chassisXP = wholeChassis[0][wholeChassis[0].length-1]+deltaX;
+            var chassisYP = wholeChassis[1][wholeChassis[1].length-1]+deltaY;
 
             wholeChassis[0].push(chassisXP);
             wholeChassis[1].push(chassisYP);
@@ -106,10 +108,10 @@ export default class Car{
 
         var wheelRadius = hubRadius + tireHeight;
 
-        var wheel = su.arc([0,0],wheelRadius, 0, 2*Math.PI, 50);
-        var hub = su.arc([0,0], hubRadius, 0, 2*Math.PI, 50);
+        var wheel = su.arc([0,0],wheelRadius, 0, 2*Math.PI, 20);
+        var hub = su.arc([0,0], hubRadius, 0, 2*Math.PI, 20);
 
-        console.log(wheel);
+
 
         var m_c = 1600;
         var m_f = 2 * 23;
@@ -149,7 +151,7 @@ export default class Car{
 
         stiffness_matrix = sMTensor.div(mVTensor).arraySync();
 
-        console.log(stiffness_matrix);
+
 
         var damping_matrix = [
             [-(c_fs + c_rs), l_r * c_rs - l_f * c_fs, c_fs, c_rs],
@@ -248,9 +250,11 @@ export default class Car{
         };
 
         if (roadFun == null){
+
             var roadLimits = [-2*l_r, 2*5 * l_f];
             var roadLength = roadLimits[1] - roadLimits[0];
-            var road = new Road(roadLength, 50, "sine", 0.3, 0.04, roadLimits[0]);
+
+            var road = new Road(roadLength,4, "sine", 1, 0.04, roadLength[0]);
             this.roadFun = road;
         }
         else{
@@ -262,12 +266,175 @@ export default class Car{
 
     }
 
+    setAccel = (accel, ignoreMax=false) => {
+
+        var max_accel = this.properties["maxAccel"];
+        var max_decel = this.properties["maxDecel"];
+        if (ignoreMax || ((max_accel >= accel) && (max_decel <= accel))){
+            this.state["horizontal_accel"] = accel;
+        }
+    }
+
+    setVel = (vel, ignoreMax=false) => {
+
+        var maxVel = this.properties["maxSpeed"];
+
+        if (ignoreMax || (maxVel>=vel && vel >= 0)){
+            this.state["horizontal_velocity"] = vel;
+        }
+    }
+
+    updateState = (timeStep) =>{
+        var position = this.state["position"];
+        var velocity = this.state["velocity"];
+        var roadPos = this.state["road_position"];
+        var roadVel = this.state["road_velocity"];
+        var hVel = this.state["horizontal_velocity"];
+        var hAccel = this.state["horizontal_accel"];
+
+
+        var stiffness_matrix = this.properties["stiffness_matrix"];
+        var damping_matrix = this.properties["damping_matrix"];
+        var road_stiffness_matrix = this.properties["road_stiffness_matrix"];
+        var road_damping_matrix = this.properties["road_damping_matrix"];
+
+        var maxSpeed = this.properties["maxSpeed"];
+        //console.log("hVel", hVel);
+        if((hVel >= maxSpeed) && hAccel > 0){
+            hVel = maxSpeed;
+            hAccel = 0;
+        }
+        else if(hVel < 0 || (hVel <= 0 && hAccel < 0)){
+            hVel = 0;
+            hAccel = 0;
+        }
+
+
+
+        hVel += hAccel * timeStep;
+
+
+
+        this.state["horizontal_velocity"] = hVel;
+        this.state["horizontal_accel"] = hAccel;
+
+        var posTensor = tf.tensor(position);
+        var sMTensor = tf.tensor(stiffness_matrix);
+
+        var sXpTensor = tf.matMul(sMTensor,posTensor);
+
+
+
+        var dmpMTensor = tf.tensor(damping_matrix);
+
+        var velTensor = tf.tensor(velocity);
+        //dmpMTensor.print(true);
+        //velTensor.print(true);
+        var dXvTensor = tf.matMul(dmpMTensor, velTensor);
+
+        var rsTensor = tf.tensor(road_stiffness_matrix);
+        var rpTensor = tf.tensor(roadPos);
 
 
 
 
+        var rsXrpTensor = tf.matMul(rsTensor, rpTensor);
+
+        var normalForceVector = this.normalForceVector();
 
 
+        var sXp = sXpTensor.arraySync();
+        var dXv = dXvTensor.arraySync();
+        var rsXrp = rsXrpTensor.arraySync();
+        var nF = normalForceVector.arraySync();
+
+        //console.log(sXp);
+
+        var accel = tf.add(sXpTensor, dXvTensor, rsXrpTensor, normalForceVector).arraySync();
+
+        if (Math.abs(position[1][0] > (Math.PI*4/180))){
+            velocity[1][0] = 0;
+
+            if (position[1][0] > 0){
+                position[1][0] = (Math.PI*4/180);
+            }
+            else{
+                position[1][0] = (-Math.PI*4/180);
+            }
+
+        }
+
+
+        for (var i = 0; i< position.length; i++){
+            position[i][0] += velocity[i][0] * timeStep;
+            velocity[i][0] += accel[i][0] * timeStep;
+        }
+
+        var currStepDistance = hVel * timeStep;
+
+
+
+        this.state["distance_traveled"] += currStepDistance;
+
+
+
+        var roadCoords = this.roadFun.generate(currStepDistance);
+
+        this.roadProfile = roadCoords;
+
+        var l_f = this.properties["l_f"];
+        var l_r = this.properties["l_r"];
+
+        var linear = require('everpolate').linear;
+
+
+        var roadInterpolationFront = linear(l_f,roadCoords[0], roadCoords[1]);
+        var roadInterpolationRear = linear(-l_r, roadCoords[0], roadCoords[1]);
+
+
+
+
+        roadVel[0][0] = roadInterpolationFront[0] - roadPos[0][0];
+        roadVel[1][0] = roadInterpolationRear[0] - roadPos[1][0];
+
+
+
+        //console.log(roadPos, roadInterpolationFront, roadInterpolationRear);
+
+        roadPos[0] = roadInterpolationFront;
+        roadPos[1] = roadInterpolationRear;
+
+        //console.log(position, velocity, roadPos, roadVel);
+        this.state["position"] = position;
+        this.state["velocity"] = velocity;
+        this.state["road_position"] = roadPos;
+        this.state["road_velocity"] = roadVel;
+
+    }
+
+    normalForceVector = () => {
+
+        var initHeight = this.properties["init_height"];
+        var wheelbase = this.properties["wheelbase"];
+        var position = this.state["position"];
+        var hAccel = this.state["horizontal_accel"];
+        var m = this.properties["m"];
+        var mass_vector = this.properties["mass_vector"];
+        var height = initHeight + position[0][0] + position[2][0];
+
+        var normalForceVector = [
+            [0],
+            [0],
+            [height*m*hAccel/wheelbase],
+            [-height*m*hAccel/wheelbase]
+        ];
+
+        var normalForceTensor = tf.tensor(normalForceVector);
+        var massTensor = tf.tensor(mass_vector);
+        normalForceVector = normalForceTensor.div(massTensor);
+
+        return normalForceVector;
+    }
 
 
  }

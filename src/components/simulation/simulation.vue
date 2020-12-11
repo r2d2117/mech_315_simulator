@@ -9,6 +9,7 @@
 import * as su from "./shapeutil.js";
 import Road from "./road.js";
 import Car from "./car.js";
+import PlotSim from "./plot_sim.js"
 
 export default {
     data() {
@@ -27,11 +28,37 @@ export default {
     methods: {
         init(){
 
-            this.r = new Road(600,1,"triangle",40,0.03);
+
+
+            this.car = new Car();
+
+            this.car.setAccel(2);
+            this.timeStep = 0.0005;
+            this.interval = 100;
+            this.plotSim = new PlotSim(this.car);
+            this.r = this.car.roadFun;
+            this.iter = 0;
+            this.fpsInterval = 1000/30;
+            this.startTime = Date.now();
+            this.then = this.startTime;
 
             window.requestAnimationFrame(this.draw);
         },
         draw(){
+
+            if (this.iter < 1000 ){
+                window.requestAnimationFrame(this.draw);
+            }
+
+            var now = Date.now ()
+            var elapsed = now - this.then;
+            var totalElapsed = now - this.startTime;
+
+
+
+            //if (elapsed > this.fpsInterval){
+            this.then = now - (elapsed % this.fpsInterval);
+
             var canvas = document.getElementById('canvas');
             canvas.width = 600;
             canvas.height = 600;
@@ -44,60 +71,153 @@ export default {
             ctx.strokeStyle = 'rgba(0, 153, 255, 1)';
             ctx.strokeWidth = '4px';
             ctx.save();
-            ctx.translate(100, 400);
 
-            // Earth
-            //var time = new Date();
-            //ctx.rotate(((2 * Math.PI) / 6) * time.getSeconds() + ((2 * Math.PI) / 6000) * time.getMilliseconds());
-            //ctx.translate(60, 0);
-            //ctx.fillRect(0, 0, -40, 4); // Shadow
-
-
-
-            // 2ndEarth
-            //ctx.restore();
-            //ctx.save();
-            //ctx.translate(500,400);
-            //ctx.rotate(((2 * Math.PI) / 6) *time.getSeconds() + ((2 * Math.PI) / 6000) * time.getMilliseconds());
-            //ctx.translate(60, 0);
-            //ctx.fillRect(0, 0, -40, 4); // Shadow
-
-
-            ctx.restore();
-            var ground = this.r.generate(1);
-            ctx.beginPath();
-            ctx.arc(100, 335+(ground[1][100]), 60, 0, Math.PI * 2, false); // Earth orbit
-            ctx.moveTo(560,335+ground[1][500]);
-
-            ctx.arc(500,335+ground[1][500], 60, 0, Math.PI * 2, false);
-            ctx.stroke();
-
-
+            var ground = this.plotSim.lines["road"];
 
 
 
             ctx.beginPath();
-            ctx.moveTo(ground[0][0]+300, ground[1][0]+400);
-
-
+            ctx.moveTo(ground[0][0]*100+300, ground[1][0]*100+300);
 
             for(var i = 1; i < ground[0].length; i++){
-                var x = ground[0][i]+300;
-                var y = ground[1][i]+400;
+                var x = ground[0][i]*100+300;
+                var y = ground[1][i]*100+300;
 
                 ctx.lineTo(x, y);
             }
+
+            var chassis = this.plotSim.lines["chassis"];
+            //console.log("chassis ", chassis);
             ctx.stroke();
 
-            window.requestAnimationFrame(this.draw);
+            ctx.moveTo(chassis[0][0]*100+300, -chassis[1][0]*100+300);
+            for (var j = 1; j< chassis[0].length; j++){
+                var m = chassis[0][j]*100+300;
+                var n = -chassis[1][j]*100+300;
+
+                //console.log(m,n);
+
+                ctx.lineTo(m,n);
+            }
+
+            ctx.stroke();
+
+            var fw = this.plotSim.lines["frontTire"];
+            //console.log(fw);
+            ctx.beginPath();
+
+            ctx.moveTo(fw[0][0]*100 + 300, -fw[1][0]*100+300);
+            for (var k = 1; k < fw[0].length; k++){
+                var fwx = fw[0][k]*100 + 300;
+                var fwy = -fw[1][k]*100 + 300;
+
+                ctx.lineTo(fwx,fwy);
+
+            }
+            ctx.stroke();
+
+            var rw = this.plotSim.lines["rearTire"];
+
+            ctx.beginPath();
+
+            ctx.moveTo(rw[0][0]*100 + 300, -rw[1][0]*100+300);
+            for (var l = 1; l < rw[0].length; l++){
+                var rwx = rw[0][l]*100 + 300;
+                var rwy = -rw[1][l]*100 + 300;
+
+                ctx.lineTo(rwx,rwy);
+
+            }
+            ctx.stroke();
+
+            var fh = this.plotSim.lines["frontHub"];
+
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(255, 26, 6, 1)';
+            ctx.moveTo(fh[0][0]*100 + 300, -fh[1][0]*100+300);
+            for (var w = 1; w < fh[0].length; w++){
+                var fhx = fh[0][w]*100 + 300;
+                var fhy = -fh[1][w]*100 + 300;
+
+                ctx.lineTo(fhx,fhy);
+
+            }
+            ctx.stroke();
+
+            var rh = this.plotSim.lines["rearHub"];
+
+
+
+            ctx.beginPath();
+
+            ctx.moveTo(rh[0][0]*100 + 300, -rh[1][0]*100+300);
+
+
+            for (var xx = 1; xx < rh[0].length; xx++){
+                var rhx = rh[0][xx]*100 + 300;
+                var rhy = -rh[1][xx]*100 + 300;
+
+                ctx.lineTo(rhx,rhy);
+
+            }
+            ctx.stroke();
+
+
+            var fm = this.plotSim.lines["frontMarker"];
+
+            ctx.beginPath();
+
+            ctx.moveTo(fm[0][0]*100 + 300, -fm[1][0]*100+300);
+
+
+            for (var ff = 1; ff < fm[0].length; ff++){
+                var fmx = fm[0][ff]*100 + 300;
+                var fmy = -fm[1][ff]*100 + 300;
+
+                ctx.lineTo(fmx,fmy);
+
+            }
+            ctx.stroke();
+
+            var rm = this.plotSim.lines["rearMarker"];
+
+
+
+
+            ctx.beginPath();
+
+            ctx.moveTo(rm[0][0]*100 + 300, -rm[1][0]*100+300);
+
+
+            for (var rr = 1; rr < rm[0].length; rr++){
+                var rmx = rm[0][rr]*100 + 300;
+                var rmy = -rm[1][rr]*100 + 300;
+
+                ctx.lineTo(rmx,rmy);
+
+            }
+            ctx.stroke();
+
+
+
+
+
+            this.iter++;
+            this.plotSim.updateAnimation(0.002);
+            this.car.updateState(0.005);
+
+
+
+
+
         }
 
     }
 }
 
-//console.log(su.arc());
-//console.log(su.zigzag());
-var v = new Car();
+
+
+
 
 
 </script>
