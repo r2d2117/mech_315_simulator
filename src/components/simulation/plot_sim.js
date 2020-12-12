@@ -103,6 +103,8 @@ export default class PlotSim{
         var yF = car.state["position"][2][0];
         var yR = car.state["position"][3][0];
 
+
+
         var transformationMatrix = PlotSim.getTransformation(phi, 0, yC);
         var chassis = car.appearance["chassis"];
 

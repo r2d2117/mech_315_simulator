@@ -139,7 +139,7 @@ export default class Car{
 
         var stiffness_matrix = [
             [-(k_fs+k_rs), (l_r*k_rs)-(l_f*k_fs), k_fs,k_rs],
-            [-(l_f * k_fs)-(l_r*k_rs), -((Math.pow(l_f,2)*k_fs)+(Math.pow(l_r,2)*k_rs)),
+            [-((l_f * k_fs)-(l_r*k_rs)), -((Math.pow(l_f,2)*k_fs)+(Math.pow(l_r,2)*k_rs)),
              l_f*k_fs, -l_r*k_rs],
             [k_fs, l_f*k_fs, -(k_fs+k_ft), 0],
             [k_rs, -l_r*k_rs, 0, -(k_rs+k_rt)]
@@ -155,7 +155,7 @@ export default class Car{
 
         var damping_matrix = [
             [-(c_fs + c_rs), l_r * c_rs - l_f * c_fs, c_fs, c_rs],
-            [-(l_f * c_fs - l_r * c_rs), -(l_f**2 * c_fs + l_r**2 * c_rs),
+            [-(l_f * c_fs - l_r * c_rs), -((Math.pow(l_f,2) * c_fs) + (Math.pow(l_r, 2) * c_rs)),
              l_f * c_fs, -l_r * c_rs],
             [c_fs, l_f * c_fs, -(c_fs + c_ft), 0],
             [c_rs, -l_r * c_rs, 0, -(c_rs + c_rt)]
@@ -254,7 +254,7 @@ export default class Car{
             var roadLimits = [-2*l_r, 2*5 * l_f];
             var roadLength = roadLimits[1] - roadLimits[0];
 
-            var road = new Road(roadLength,4, "sine", 1, 0.04, roadLength[0]);
+            var road = new Road(roadLength,4, "sine", 0.5, 0.1, roadLength[0]);
             this.roadFun = road;
         }
         else{
@@ -320,37 +320,34 @@ export default class Car{
 
         var posTensor = tf.tensor(position);
         var sMTensor = tf.tensor(stiffness_matrix);
-
         var sXpTensor = tf.matMul(sMTensor,posTensor);
-
-
-
         var dmpMTensor = tf.tensor(damping_matrix);
-
         var velTensor = tf.tensor(velocity);
-        //dmpMTensor.print(true);
-        //velTensor.print(true);
         var dXvTensor = tf.matMul(dmpMTensor, velTensor);
-
         var rsTensor = tf.tensor(road_stiffness_matrix);
         var rpTensor = tf.tensor(roadPos);
+        var rvTensor = tf.tensor(roadVel);
+        var rdTensor = tf.tensor(road_damping_matrix);
 
 
-
-
+        var rdXrvTensor = tf.matMul(rdTensor, rvTensor);
         var rsXrpTensor = tf.matMul(rsTensor, rpTensor);
-
         var normalForceVector = this.normalForceVector();
 
 
-        var sXp = sXpTensor.arraySync();
-        var dXv = dXvTensor.arraySync();
-        var rsXrp = rsXrpTensor.arraySync();
-        var nF = normalForceVector.arraySync();
+
 
         //console.log(sXp);
 
-        var accel = tf.add(sXpTensor, dXvTensor, rsXrpTensor, normalForceVector).arraySync();
+        //var accel = tf.add(sXpTensor, dXvTensor, rsXrpTensor, rdXrvTensor, normalForceVector).arraySync();
+
+
+
+
+        var accel = rsXrpTensor.add(rdXrvTensor).add(dXvTensor).add(normalForceVector)
+            .add(sXpTensor).arraySync();
+
+
 
         if (Math.abs(position[1][0] > (Math.PI*4/180))){
             velocity[1][0] = 0;
@@ -398,13 +395,9 @@ export default class Car{
         roadVel[1][0] = roadInterpolationRear[0] - roadPos[1][0];
 
 
-
-        //console.log(roadPos, roadInterpolationFront, roadInterpolationRear);
-
         roadPos[0] = roadInterpolationFront;
         roadPos[1] = roadInterpolationRear;
 
-        //console.log(position, velocity, roadPos, roadVel);
         this.state["position"] = position;
         this.state["velocity"] = velocity;
         this.state["road_position"] = roadPos;
@@ -421,6 +414,7 @@ export default class Car{
         var m = this.properties["m"];
         var mass_vector = this.properties["mass_vector"];
         var height = initHeight + position[0][0] + position[2][0];
+
 
         var normalForceVector = [
             [0],
