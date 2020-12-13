@@ -2,7 +2,7 @@ import * as su from "./shapeutil.js";
 import Road from "./road.js";
 import * as tf from '@tensorflow/tfjs';
 import * as dq from 'collections/deque';
-import * as sl from 'scikit-learn';
+
 
 
 export default class Car{

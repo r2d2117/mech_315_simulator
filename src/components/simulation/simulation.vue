@@ -27,9 +27,6 @@ export default {
     },
     methods: {
         init(){
-
-
-
             this.car = new Car();
 
             this.car.setAccel(1.5);
