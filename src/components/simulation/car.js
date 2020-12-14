@@ -124,8 +124,8 @@ export default class Car{
         var k_ft = 150000;
         var k_rt = 150000;
 
-        var c_fs = 1000;
-        var c_rs = 1000;
+        var c_fs = 2000;
+        var c_rs = 2000;
         var c_ft = 20;
         var c_rt = 20;
 
