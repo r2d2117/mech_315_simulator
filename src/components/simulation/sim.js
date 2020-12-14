@@ -2,7 +2,7 @@ import * as tf from '@tensorflow/tfjs';
 
 import * as su from "./shapeutil.js";
 
-export default class PlotSim{
+export default class Sim{
     constructor(car, suspension = false, roadMarkerInterval = 0, roadMarkerVerticalOffset= 0.25){
 
 
@@ -106,7 +106,7 @@ export default class PlotSim{
 
 
 
-        var transformationMatrix = PlotSim.getTransformation(phi, 0, yC);
+        var transformationMatrix = Sim.getTransformation(phi, 0, yC);
         var chassis = car.appearance["chassis"];
 
 

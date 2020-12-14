@@ -9,7 +9,7 @@
 import * as su from "./shapeutil.js";
 import Road from "./road.js";
 import Car from "./car.js";
-import PlotSim from "./plot_sim.js"
+import Sim from "./sim.js"
 
 export default {
     data() {
@@ -32,7 +32,7 @@ export default {
             this.car.setAccel(1.5);
             this.timeStep = 0.0005;
             this.interval = 100;
-            this.plotSim = new PlotSim(this.car);
+            this.sim = new Sim(this.car);
             this.r = this.car.roadFun;
             this.iter = 0;
             this.fpsInterval = 1000/30;
@@ -66,7 +66,7 @@ export default {
                 ctx.strokeWidth = '10px';
                 ctx.save();
 
-                var ground = this.plotSim.lines["road"];
+                var ground = this.Sim.lines["road"];
 
 
                 
@@ -80,7 +80,7 @@ export default {
                     ctx.lineTo(x, y);
                 }
                 ctx.stroke();
-                var chassis = this.plotSim.lines["chassis"];
+                var chassis = this.simm.lines["chassis"];
                 
                 //console.log("chassis ", chassis)
                 ctx.restore();
@@ -101,7 +101,7 @@ export default {
 
                 ctx.stroke();
 
-                var fw = this.plotSim.lines["frontTire"];
+                var fw = this.sim.lines["frontTire"];
                 //console.log(fw);
 
                 ctx.strokeStyle = 'rgba(20, 20, 20, 1)';
@@ -119,7 +119,7 @@ export default {
                 }
                 ctx.stroke();
 
-                var rw = this.plotSim.lines["rearTire"];
+                var rw = this.sim.lines["rearTire"];
 
                 ctx.beginPath();
 
@@ -133,7 +133,7 @@ export default {
                 }
                 ctx.stroke();
 
-                var fh = this.plotSim.lines["frontHub"];
+                var fh = this.sim.lines["frontHub"];
 
                 ctx.beginPath();
                 ctx.strokeStyle = 'rgba(255, 26, 6, 1)';
@@ -147,7 +147,7 @@ export default {
                 }
                 ctx.stroke();
 
-                var rh = this.plotSim.lines["rearHub"];
+                var rh = this.sim.lines["rearHub"];
 
 
 
@@ -166,7 +166,7 @@ export default {
             ctx.stroke();
 
 
-            var fm = this.plotSim.lines["frontMarker"];
+            var fm = this.sim.lines["frontMarker"];
 
             ctx.beginPath();
 
@@ -182,7 +182,7 @@ export default {
             }
             ctx.stroke();
 
-            var rm = this.plotSim.lines["rearMarker"];
+            var rm = this.sim.lines["rearMarker"];
 
 
 
@@ -206,7 +206,7 @@ export default {
 
 
             this.iter++;
-            this.plotSim.updateAnimation(0.002);
+            this.sim.updateAnimation(0.002);
             this.car.updateState(0.005);
 
 
