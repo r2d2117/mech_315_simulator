@@ -62,32 +62,37 @@ export default {
                 ctx.clearRect(0, 0, 600, 600); // clear canvas
 
                 ctx.fillStyle = 'rgba(255, 26, 5, 1)';
-                ctx.strokeStyle = 'rgba(0, 153, 255, 1)';
-                ctx.strokeWidth = '4px';
+                ctx.strokeStyle = 'rgba(20, 20, 20, 1)';
+                ctx.strokeWidth = '10px';
                 ctx.save();
 
                 var ground = this.plotSim.lines["road"];
 
 
-
+                
                 ctx.beginPath();
-                ctx.moveTo(ground[0][0]*100+300, ground[1][0]*100+300);
+                ctx.moveTo(ground[0][0]*100+400, ground[1][0]*100+400);
 
                 for(var i = 1; i < ground[0].length; i++){
                     var x = ground[0][i]*100+300;
-                    var y = -ground[1][i]*100+420;
+                    var y = -ground[1][i]*100+520;
 
                     ctx.lineTo(x, y);
                 }
-
-                var chassis = this.plotSim.lines["chassis"];
-                //console.log("chassis ", chassis);
                 ctx.stroke();
+                var chassis = this.plotSim.lines["chassis"];
+                
+                //console.log("chassis ", chassis)
+                ctx.restore();
+                ctx.strokeStyle = 'rgba(57, 73, 92, 1)';
+                ctx.strokeWidth = '10px';
 
-                ctx.moveTo(chassis[0][0]*100+300, -chassis[1][0]*100+300);
+                
+
+                ctx.moveTo(chassis[0][0]*100+300, -chassis[1][0]*100+400);
                 for (var j = 1; j< chassis[0].length; j++){
                     var m = chassis[0][j]*100+300;
-                    var n = -chassis[1][j]*100+300;
+                    var n = -chassis[1][j]*100+400;
 
                     //console.log(m,n);
 
@@ -98,12 +103,16 @@ export default {
 
                 var fw = this.plotSim.lines["frontTire"];
                 //console.log(fw);
+
+                ctx.strokeStyle = 'rgba(20, 20, 20, 1)';
+                ctx.strokeWidth = '18px';
+
                 ctx.beginPath();
 
-                ctx.moveTo(fw[0][0]*100 + 300, -fw[1][0]*100+300);
+                ctx.moveTo(fw[0][0]*100 + 300, -fw[1][0]*100+400);
                 for (var k = 1; k < fw[0].length; k++){
                     var fwx = fw[0][k]*100 + 300;
-                    var fwy = -fw[1][k]*100 + 300;
+                    var fwy = -fw[1][k]*100 + 400;
 
                     ctx.lineTo(fwx,fwy);
 
@@ -114,10 +123,10 @@ export default {
 
                 ctx.beginPath();
 
-                ctx.moveTo(rw[0][0]*100 + 300, -rw[1][0]*100+300);
+                ctx.moveTo(rw[0][0]*100 + 300, -rw[1][0]*100+400);
                 for (var l = 1; l < rw[0].length; l++){
                     var rwx = rw[0][l]*100 + 300;
-                    var rwy = -rw[1][l]*100 + 300;
+                    var rwy = -rw[1][l]*100 + 400;
 
                     ctx.lineTo(rwx,rwy);
 
@@ -128,10 +137,10 @@ export default {
 
                 ctx.beginPath();
                 ctx.strokeStyle = 'rgba(255, 26, 6, 1)';
-                ctx.moveTo(fh[0][0]*100 + 300, -fh[1][0]*100+300);
+                ctx.moveTo(fh[0][0]*100 + 300, -fh[1][0]*100+400);
                 for (var w = 1; w < fh[0].length; w++){
                     var fhx = fh[0][w]*100 + 300;
-                    var fhy = -fh[1][w]*100 + 300;
+                    var fhy = -fh[1][w]*100 + 400;
 
                     ctx.lineTo(fhx,fhy);
 
@@ -144,12 +153,12 @@ export default {
 
                 ctx.beginPath();
 
-                ctx.moveTo(rh[0][0]*100 + 300, -rh[1][0]*100+300);
+                ctx.moveTo(rh[0][0]*100 + 300, -rh[1][0]*100+400);
 
 
                 for (var xx = 1; xx < rh[0].length; xx++){
                     var rhx = rh[0][xx]*100 + 300;
-                var rhy = -rh[1][xx]*100 + 300;
+                    var rhy = -rh[1][xx]*100 + 400;
 
                 ctx.lineTo(rhx,rhy);
 
@@ -161,12 +170,12 @@ export default {
 
             ctx.beginPath();
 
-            ctx.moveTo(fm[0][0]*100 + 300, -fm[1][0]*100+300);
+            ctx.moveTo(fm[0][0]*100 + 300, -fm[1][0]*100+400);
 
 
             for (var ff = 1; ff < fm[0].length; ff++){
                 var fmx = fm[0][ff]*100 + 300;
-                var fmy = -fm[1][ff]*100 + 300;
+                var fmy = -fm[1][ff]*100 + 400;
 
                 ctx.lineTo(fmx,fmy);
 
@@ -180,12 +189,12 @@ export default {
 
             ctx.beginPath();
 
-            ctx.moveTo(rm[0][0]*100 + 300, -rm[1][0]*100+300);
+            ctx.moveTo(rm[0][0]*100 + 300, -rm[1][0]*100+400);
 
 
             for (var rr = 1; rr < rm[0].length; rr++){
                 var rmx = rm[0][rr]*100 + 300;
-                var rmy = -rm[1][rr]*100 + 300;
+                var rmy = -rm[1][rr]*100 + 400;
 
                 ctx.lineTo(rmx,rmy);
 
@@ -219,10 +228,9 @@ export default {
 <style scoped>
   .inner{
   display: block;
-  margin: auto;
+  margin: 0 auto;
   width: 100%;
   text-align: center;
-  padding: 4rem 0;
   }
 
   #canvas{

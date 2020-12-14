@@ -58,8 +58,8 @@ export default class PlotSim{
         ];
 
         lines["rearMarker"] = [
-            [-l_r, -l_r+hubRadius],
-            [wheelDatum, wheelDatum]
+            [-l_r, -l_r-1+hubRadius],
+            [wheelDatum-1, wheelDatum-1]
         ];
 
         var roadProfile = car.roadProfile;
@@ -73,6 +73,7 @@ export default class PlotSim{
             roadProfile[0],
             roadProfile[1].map(x => x + roadDatum)
         ];
+
 
         this.suspension = suspension;
         this.lines = lines;
@@ -136,12 +137,12 @@ export default class PlotSim{
 
         this.lines["frontMarker"] = [
             [l_f, l_f+hubRadius * Math.cos(-wheelAngle)],
-            [wheelDatum + yF, wheelDatum + yF+ hubRadius*Math.sin(-wheelAngle)]
+            [wheelDatum + yF-0.1, wheelDatum + yF-0.1+ hubRadius*Math.sin(-wheelAngle)]
         ];
 
         this.lines["rearMarker"] = [
             [-l_r, -l_r+hubRadius * Math.cos(-wheelAngle)],
-            [wheelDatum + yR, wheelDatum + yR+ hubRadius*Math.sin(-wheelAngle)]
+            [wheelDatum + yR-0.1, wheelDatum - 0.1 + yR+ hubRadius*Math.sin(-wheelAngle)]
         ];
 
 

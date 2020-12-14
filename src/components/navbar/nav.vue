@@ -1,14 +1,15 @@
 <template>
   <div class="bar">
 
-
-      <div class="nav-items">
-      <ul>
-	<li>About</li>
-	<li>Contact</li>
-	<li>Resume</li>
-      </ul>
-    </div>
+       <div class="nav-item">
+             Final Report Simulation
+        </div>
+       <div class="nav-item main-item">
+            Mech 315
+      </div>
+      <div class="nav-item">
+      Thomas Woodfine-MacPherson
+      </div>
   </div>
 </template>
 
@@ -22,28 +23,27 @@ name: 'Nav'
   .bar{
       height: 5rem;
       width: 100%;
-      top: 0px;
       left: 0px;
       background-color: rgb(57,72,92);
-      
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
   }
 
 
-  .nav-items{
+  .nav-item{
       
       color: white;
       font-size: 1.8rem;
-      height: 100%;
-      text-align: right;
-      margin: 0 1rem;
+      font-family: Verlag;
+   }
 
-      
-  }
-  .nav-items li{
-      display: inline-block;
-      padding: 0 1rem;
-      line-height: 5rem;
-      }
-
+  .main-item{
+        align-self: center;
+        font-size: 2.4rem;
+        font-weight: 600;
+        padding-bottom: 0.4rem;
+}                
+         
 
 </style>

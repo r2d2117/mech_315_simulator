@@ -13,22 +13,22 @@ export default class Car{
             properties = {};
         }
 
-        var wheelbase = 2.74;
-        var wellCenterHeight = 0.124847;
-        var wellRadius = 0.38;
-        var frontWellCenter = -0.358914;
+        var wheelbase = 2.89052
+        var wellCenterHeight = 0.14;
+        var wellRadius = 0.5;
+        var frontWellCenter = -0.7;
         var center = [frontWellCenter, wellCenterHeight];
-        var chassis = su.arc(center, wellRadius, (-19.18*Math.PI/180), (200.96*Math.PI/180), 50);
+        var chassis = su.arc(center, wellRadius, (-14.18*Math.PI/180), (190*Math.PI/180), 50);
 
         var rearWellCenter = frontWellCenter - wheelbase;
         var rearCenter = [rearWellCenter, wellCenterHeight];
-        var rearChassis = su.arc(rearCenter, wellRadius, (-19.18*Math.PI/180), (194.3*Math.PI/180), 50);
+        var rearChassis = su.arc(rearCenter, wellRadius, (-6*Math.PI/180), (190*Math.PI/180), 50);
 
         var wholeChassis = tf.concat([chassis,rearChassis],1).arraySync();
 
         var chassisDelta = [
-            [-0.514, -0.069, 0.269, 0.392, 1.03, 0.891, 0.583, 1.32, 0.138, -0.092],
-            [0, 0.392, 0.415, 0.046, 0.292, 0, -0.33, -0.253, -0.238, -0.35]
+            [-0.32, -0.12, 0.1, 0.04, 0.3, 2.2, 0.57, 1.32, 0.138, -0.092],
+            [0, 0.2, 0, 0.75, 0.8, 0, -0.72, -0.2, -0.6, -0.2]
         ];
 
         for(var i = 0; i<chassisDelta[0].length; i++){
@@ -99,17 +99,17 @@ export default class Car{
             [rwCenter[2]]
         ];
 
-        var tireWidth = 0.0225;
-        var tireAspect = 0.50;
-        var hubD = 17 * 0.0254;
+        var tireWidth = 0.20;
+        var tireAspect = 0.60;
+        var hubD = 17 * 0.03;
 
         var tireHeight = tireAspect * tireWidth;
         var hubRadius = 0.5 * hubD;
 
         var wheelRadius = hubRadius + tireHeight;
 
-        var wheel = su.arc([0,0],wheelRadius, 0, 2*Math.PI, 20);
-        var hub = su.arc([0,0], hubRadius, 0, 2*Math.PI, 20);
+        var wheel = su.arc([0,-0.1],wheelRadius, 0, 2*Math.PI, 20);
+        var hub = su.arc([0,-0.1], hubRadius, 0, 2*Math.PI, 20);
 
 
 

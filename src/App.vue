@@ -1,19 +1,13 @@
 <template>
 <Nav></Nav>  
-<div class="inner">
+
   <Simulation :v1='velocity' :v2='mass' :v3='k'></Simulation>
-  <div class="cp-outer">
-    <div class="cp">
-      <div class="cp-title"><p> Control Panel</p></div>
-      <ControlPanel varName="Velocity" @set-mod="setVel"></ControlPanel>
-      <ControlPanel varName="Mass" @set-mod="setMass"></ControlPanel>
-      <ControlPanel varName="Spring Constant" @set-mod="setK"></ControlPanel>
-      <h3> Velocity: {{velocity}} </h3>
-      <h3> Mass: {{mass}} </h3>
-      <h3> Spring Constant: {{k}} </h3>
-    </div>
+  <div class="info">
+  Acceleration applied: 2.5 m/s<br>
+  Note: Wheels moving below the surface of the road means they are being compressed.
   </div>
-</div>
+
+
 
 
 </template>
@@ -26,7 +20,7 @@ import ControlPanel from './components/controlpanel/controlpanel.vue'
 export default {
   name: 'App',
     components: {
-        Nav,Simulation, ControlPanel
+        Nav,Simulation,
     },
     methods: {
         setVel(val){
@@ -54,29 +48,18 @@ export default {
   *{
       margin: 0;
   }
-  .inner{
-      margin: 0 20%;
-  }
-  .cp-outer{
-  
-    display: block;
-    margin: 0 auto;
-    text-align: center;
-    padding: 0 25%;
-}
 
-.cp-title{
-    font-size: 1.5rem;
-    margin-bottom: 0.7rem;
-    }
-  
-.cp{
-    
-    padding: 2rem;
-    background-color: rgb(200,200,200);
-    border: solid 3px black;
-  
-  }
+  .info{
+  text-align: left;
+  margin: 0 30%;
+  font-family: Helvetica;
+  font-size: 1.2rem;
+  display: block;
+  padding-bottom: 4rem;
+  top: -5%;
+  } 
+
+
 
   
 </style>
